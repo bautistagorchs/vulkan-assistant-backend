@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  PENDING
+  CHEQUE
+  PAID
+}
+
+enum CondicionIVA {
+  RI
+  Monotributo
+  Exento
+  ConsumidorFinal
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  name      String
+  cuit      String   @unique
+  direccion String
+  localidad String
+  telefono  String
+  condicionIVA CondicionIVA
+  email     String?
+  notas     String?
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id         Int       @id @default(autoincrement())
+  name       String
+  basePrice  Float
+  stockKg    Float
+  prices     ProductPrice[]
+  orderItems OrderItem[]
+}
+
+model ProductPrice {
+  id        Int      @id @default(autoincrement())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  finalPrice Float
+  validFrom DateTime
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  client    Client      @relation(fields: [clientId], references: [id])
+  clientId  Int
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  invoice   Invoice?
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  boxes     Int
+  totalKg   Float
+  unitPrice Float
+  subtotal  Float
+}
+
+model Invoice {
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int      @unique
+  total     Float
+  paymentStatus PaymentStatus @default(PENDING)
+  createdAt DateTime @default(now())
+}
+
+
