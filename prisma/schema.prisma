@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum PaymentStatus {
@@ -44,9 +45,10 @@ model Product {
   id         Int       @id @default(autoincrement())
   name       String
   basePrice  Float
-  stockKg    Float
+  active     Boolean   @default(true)
   prices     ProductPrice[]
   orderItems OrderItem[]
+  boxes      Box[]
 }
 
 model ProductPrice {
@@ -72,10 +74,10 @@ model OrderItem {
   orderId   Int
   product   Product  @relation(fields: [productId], references: [id])
   productId Int
-  boxes     Int
   totalKg   Float
   unitPrice Float
   subtotal  Float
+  boxes     Box[]
 }
 
 model Invoice {
@@ -86,5 +88,18 @@ model Invoice {
   paymentStatus PaymentStatus @default(PENDING)
   createdAt DateTime @default(now())
 }
+
+model Box {
+  id               Int        @id @default(autoincrement())
+  product          Product    @relation(fields: [productId], references: [id])
+  productId        Int
+  kg               Float
+  isFrozen         Boolean    @default(false)
+  usedInOrderItem  OrderItem? @relation(fields: [usedInOrderItemId], references: [id])
+  usedInOrderItemId Int?
+  createdAt        DateTime   @default(now())
+}
+
+
 
 
