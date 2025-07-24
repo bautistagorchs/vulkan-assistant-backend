@@ -11,7 +11,6 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api", routes);
 
-// Verificar conexión a la base de datos
 prisma
   .$connect()
   .then(() => {

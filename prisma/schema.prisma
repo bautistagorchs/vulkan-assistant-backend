@@ -3,6 +3,7 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// directUrl = env("DIRECT_URL")
 
 generator client {
   provider = "prisma-client-js"
@@ -11,7 +12,6 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum PaymentStatus {
@@ -46,6 +46,7 @@ model Product {
   name       String
   basePrice  Float
   active     Boolean   @default(true)
+  hasStock   Boolean   @default(true)
   prices     ProductPrice[]
   orderItems OrderItem[]
   boxes      Box[]
