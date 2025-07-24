@@ -33,7 +33,6 @@ router.get("/get-boxes/:id", async (req, res) => {
   const boxes = await prisma.box.findMany({
     where: { productId: id },
   });
-  console.log("Boxes for product ID", id, ":", boxes);
   res.json({ boxes });
 });
 

@@ -46,7 +46,6 @@ router.post("/", async (req, res) => {
         notas,
       },
     });
-    // console.log("Client created:", client);
     res.status(201).json(client);
   } catch (err) {
     res.status(500).json({ error: "Error al crear el cliente" });
