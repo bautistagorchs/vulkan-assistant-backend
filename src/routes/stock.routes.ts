@@ -133,4 +133,29 @@ router.post("/products/:id/boxes", async (req, res) => {
   }
 });
 
+// DELETE - Eliminar todo el stock (todas las cajas no utilizadas)
+router.delete("/all", async (req, res) => {
+  try {
+    // Eliminar todas las cajas que no están asignadas a órdenes
+    const deletedBoxes = await prisma.box.deleteMany({
+      where: {
+        usedInOrderItemId: null,
+      },
+    });
+
+    // Actualizar hasStock de todos los productos a false
+    await prisma.product.updateMany({
+      data: { hasStock: false },
+    });
+
+    res.json({
+      message: "Todo el stock eliminado exitosamente",
+      deletedCount: deletedBoxes.count,
+    });
+  } catch (error) {
+    console.error("Error eliminando todo el stock:", error);
+    res.status(500).json({ error: "Error al eliminar todo el stock" });
+  }
+});
+
 export default router;

@@ -96,6 +96,7 @@ model Box {
   productId        Int
   kg               Float
   isFrozen         Boolean    @default(false)
+  entryDate        DateTime?
   usedInOrderItem  OrderItem? @relation(fields: [usedInOrderItemId], references: [id])
   usedInOrderItemId Int?
   createdAt        DateTime   @default(now())
